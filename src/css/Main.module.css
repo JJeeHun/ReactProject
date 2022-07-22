@@ -1,0 +1,8 @@
+
+
+.mainContainer {
+    position: relative;
+    box-sizing: border-box;
+    border: 5px solid red;
+    overflow: hidden;
+}

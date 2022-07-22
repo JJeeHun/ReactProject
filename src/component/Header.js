@@ -1,11 +1,11 @@
 import {useState, useEffect, useCallback, memo} from 'react'
-import Store from '../store/Store'
-import {Action_Menus} from '../store/reducer';
+import Store,{Action_Menus} from '../store/Store'
 import Style from '../css/Header.module.css';
 
 
 
 const Menu_Seach = (setWidth) => {
+  //menu 리스트를 불러올 server 통신
   return () => {
     fetch( 'https://jsonplaceholder.typicode.com/todos/1' )
     .then( response => response.json() )
@@ -19,6 +19,8 @@ const Menu_Seach = (setWidth) => {
       //상태값 변경
       Store.dispatch(Action_Menus.actions.setMenus({categorys,menuList}));
       setWidth(`calc(100% / ${Store_Menus.categorys.length})`);//카테고리 리스트 갯수에 따라 width 변경
+    }).finally( () => {
+      //로딩 처리있을 경우 finally에서 로딩 회수
     });//then
   };//return
 };
@@ -40,10 +42,10 @@ const Header = memo(
       <header className={Style.header}>
         <nav>
           <ul className={Style.menus}>
-            {categorys.map( category => 
-              <li key={category.COMD_CODE+category.COMD_CDNM} style={{width}}>
-                <a href="#">{category.COMD_CDNM}</a>                
-                <SubMenuList data={ menuList.filter( menu => menu.SYST_CODE === category.COMD_CODE) }/>
+            {categorys.map( ({COMD_CODE,COMD_CDNM}) => 
+              <li key={COMD_CODE+COMD_CDNM} style={{width}}>
+                <a href="#">{COMD_CDNM}</a>                
+                <SubMenuList data={ menuList.filter( menu => menu.SYST_CODE === COMD_CODE) }/>
               </li>
             )}
           </ul>
@@ -53,15 +55,25 @@ const Header = memo(
   }
 );
 
-const SubMenuList = ({data = []}) => {
-  return (
-    <ul className={Style.subMenus}>
-      { data.map( menu => <li key={menu.MENU_IDXX}>{menu.MENU_NAME}</li>) }
-    </ul>
-  )
-}
 
+
+//서브 메뉴 컴포넌트
+const SubMenuList = memo(
+  ({data = []}) => {
+    return (
+      <ul className={Style.subMenus}>
+        { data.map( ({MENU_IDXX,MENU_NAME}) => <li key={MENU_IDXX} onClick={ () => Store.dispatch(Action_Menus.actions.setOpen({MENU_IDXX,MENU_NAME})) }>{MENU_NAME}</li>) }
+      </ul>
+    )
+  }
+)
+
+
+
+//export
 export default Header;
+
+
 
 
 //test용 코드
@@ -233,7 +245,7 @@ const getSampleData = () => {
       "SORT_ORDR" : 10,
       "USEX_YSNO" : "1"
     }
-  ];
+  ].slice(0,7);
 }
 
 const getMenuList = () => {

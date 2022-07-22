@@ -1,0 +1,30 @@
+:root {
+    --tabs-height : 40px;
+}
+
+section.tabs {
+    border: 5px solid blue;
+    height: var(--tabs-height);
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+section.tabViews {
+    position: relative;
+    border: 5px solid green;
+    width: 100%;
+    height: calc(100% - var(--tabs-height));
+    box-sizing: border-box;
+}
+
+.tabViews .view {
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.tabViews .view.on {
+    display: block;
+}
